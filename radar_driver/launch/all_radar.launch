@@ -1,0 +1,27 @@
+<launch>
+
+    <include file="$(find radar_driver)/launch/single_radar.launch">
+        <arg name="name" value="radar_left"/>
+        <arg name="iface" value="Anker"/>
+        <arg name="port" value="31122" />
+        <arg name="capture" value="1" />
+        <arg name="scanMode" value="0" />
+    </include>
+
+    <include file="$(find radar_driver)/launch/single_radar.launch">
+        <arg name="name" value="radar_right"/>
+        <arg name="iface" value="Anker"/>
+        <arg name="port" value="31121" />
+        <arg name="capture" value="1" />
+        <arg name="scanMode" value="0" />
+    </include>
+
+    <!--Filtering node-->
+    <node name="multi_radar" pkg="radar_driver" type="multi_radar" args="-t filtered_radar_packet" />
+
+    <!--TRANSFORM -->
+    <node pkg="tf" type="static_transform_publisher" name="radar_right_tf" args="0 -0.5 0 0 0 0 base_link radar_right_frame 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="radar_left_tf" args="0 0.5 0 0 0 0 base_link radar_left_frame 100" />
+
+</launch>

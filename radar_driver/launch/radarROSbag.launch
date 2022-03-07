@@ -1,0 +1,21 @@
+<launch>
+    <arg name="name" default="radar"/>
+    <arg name="bagPath" default="empty/dir"/>
+    <arg name="scanMode" default="0"/>
+    <arg name="bagTopic" default="unfiltered_radar_packet"/>
+
+    <group ns="$(arg name)">
+        <node pkg="rosbag" type="play" name="rosbag"
+            args="-l $(arg bagPath)"/>
+
+        <node name="radar_processor" pkg="radar_driver" type="radar_processor"
+            args="-s $(arg scanMode) -t $(arg bagTopic)"/>
+
+        <node name="radar_visualizer" pkg="radar_driver" type="radar_visualizer"
+            args="-t filtered_radar_packet"/>
+
+        <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+
+        <node type="rviz" name="rviz" pkg="rviz" args="-d $(find radar_driver)/rviz/radarPointCloud.rviz" />
+    </group>
+</launch>

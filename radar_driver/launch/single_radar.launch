@@ -1,0 +1,25 @@
+<!-- see http://wiki.ros.org/roslaunch/XML/arg -->
+<!-- Radar Notes are 0 - indexed -->
+<launch>
+    <arg name="name" default="radar"/>
+    <arg name="iface"/>
+    <arg name="port"/>
+    <!-- Berklee filter string, can be used, not necessary -->
+    <arg name="filter" default=""/>
+    <arg name="capture" default = "1"/>
+    <!-- Capture path (cpath) to pcap file only required if running offline -->
+    <arg name="cpath" default = "/home/saeejithn/wato/ws_embedded/offline/radarCap5.pcap"/>
+    <arg name="scanMode" default="0"/>
+    <arg name="uTopic" default="unfiltered_radar_packet"/>
+    <group ns="$(arg name)">
+        <node name="radar_publisher" pkg="radar_driver" type="radar_publisher"
+            args="-e $(arg iface) -p $(arg port) -c $(arg capture) -l $(arg cpath) -f $(arg filter) "/>
+
+        <node name="radar_processor" pkg="radar_driver" type="radar_processor"
+            args="-s $(arg scanMode) -t $(arg uTopic) "/>
+
+        <node name="radar_visualizer" pkg="radar_driver" type="radar_visualizer"
+            args="-t filtered_radar_packet -n $(arg name)" />
+        <!--node type="rviz" name="rviz" pkg="rviz" args="-d $(find radar_driver)/rviz/radarFOVline.rviz" /-->
+    </group>
+</launch>
